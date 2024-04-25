@@ -1,0 +1,76 @@
+<div class="container-fluid" *ngIf="!showForm">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>Daftar Discount</h1>
+                    <div class="col-10 d-flex justify-content-end">
+                        <div style="min-width:200px">
+                            <!-- <div class="col-12 w-100 h-100"> -->
+                            <ng-select [items]="customers" (change)="filterByCustomer($event)" id="filter-customer"
+                                placeholder="Pilih Customer" bindLabel="name" bindValue="id" [loading]="showLoading"
+                                [searchable]="false" class="custom-style" [multiple]="true">
+                                <ng-template ng-header-tmp>
+                                    <input class="form-control" type="text" debounceKeyUp
+                                        (onEvent)="getCustomers($event.target.value)" />
+                                </ng-template>
+                            </ng-select>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover" datatable [dtOptions]="dtOptions"
+                        *ngIf="thDiscount && thDiscount.length > 0">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th style="max-width: 600px;"></th>
+                                <th *ngFor="let discount of thDiscount;">{{ discount.name }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let customer of listCustomer">
+                                <td class="align-middle">{{ customer.no }}</td>
+                                <td class="align-middle">{{ customer.name }}</td>
+                                <td class="align-middle">
+                                    <button class="btn btn-light btn-sm"
+                                        (click)="updateCustomer(formCustomer, customer.id)" ngbTooltip="Ubah Customer">
+                                        <em class="fa fa-edit"></em>
+                                    </button>
+                                </td>
+                                <td *ngFor="let promo of listDiscount">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                            [checked]="isPromoApplied(customer.discount, promo.id)"
+                                            (change)="onPromoCheckboxChange($event, customer, promo.id)">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" style="text-align:right">Total:</th>
+                                <th *ngFor="let diskon of listDiscount" class="total">{{ totalDiscounts[diskon.id] }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #formCustomer let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Update Customer</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-customer [userId]="customerId" (afterSave)="modal.close(); reloadDataTable();"></app-form-customer>
+    </div>
+</ng-template>

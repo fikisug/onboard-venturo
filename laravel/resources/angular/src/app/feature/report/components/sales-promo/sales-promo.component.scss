@@ -1,0 +1,25 @@
+@media (max-width: 768px) {
+    .no-col {
+      max-width: 50px;
+    }
+    .customer-col {
+      width: auto;
+    }
+  }
+  
+  .no-col {
+    width: 70px;
+  }
+  
+  .customer-col {
+    width: 400px;
+  }
+  
+  .info-col {
+    width: 150px;
+    min-width: 150px;
+  }
+
+  ::ng-deep .ng-select.custom-style .ng-select-container {
+    min-height: 30px;
+  }

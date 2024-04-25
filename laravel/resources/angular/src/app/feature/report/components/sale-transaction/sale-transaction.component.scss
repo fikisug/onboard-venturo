@@ -1,0 +1,8 @@
+.col-md-1 {
+	flex: 0 0 auto;
+	width: 5%;
+}
+
+::ng-deep .ng-select.custom-style .ng-select-container {
+    min-height: 30px;
+  }

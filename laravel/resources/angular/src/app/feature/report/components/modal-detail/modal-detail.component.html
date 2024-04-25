@@ -1,0 +1,45 @@
+<div class="loadingProgress" [style.width.%]="loadingProgress"></div>
+<div class="table-responsive">
+    <table class="table table-hover table-bordered" id="report-sales">
+        <thead class="thead-light">
+        <tr>
+            <th class="align-middle">No Struk</th>
+            <th class="align-middle text-center">Subtotal</th>
+            <th class="align-middle text-center">Tax</th>
+            <th class="align-middle text-center">Voucher</th>
+            <th class="align-middle text-center">Discount</th>
+            <th class="align-middle text-center">Total Payment</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let transaction of detailSale.transaksi">
+            <td class="align-middle">
+                {{ transaction.no_struk != '' ? transaction.no_struk : '-' }}
+            </td>
+            <td class="align-middle text-center">
+                {{ transaction.subtotal > 0 ? (transaction.subtotal | number) : '-' }}
+            </td>
+            <td class="align-middle text-center">
+                {{ transaction.tax > 0 ? (transaction.tax | number) : '-' }}
+            </td>
+            <td class="align-middle text-center">
+                {{ transaction.voucher > 0 ? (transaction.voucher | number) : '-' }}
+            </td>
+            <td class="align-middle text-center">
+                {{ transaction.discount > 0 ? (transaction.discount | number) : '-' }}
+            </td>
+            <td class="align-middle text-center">
+                {{ transaction.total > 0 ? (transaction.total | number) : '-' }}
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="5">Total</td>
+            <td class="align-middle fw-bold text-center">
+                {{ detailSale.totalPerDate > 0 ? (detailSale.totalPerDate | number) : '-' }}
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

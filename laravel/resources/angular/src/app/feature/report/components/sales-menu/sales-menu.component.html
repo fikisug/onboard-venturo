@@ -1,0 +1,97 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <h1>Rekap Penjualan Per Menu</h1>
+                    <div class="row g-1 justify-content-end" style="width: 800px;">
+                        <div class="col-12 col-md-3">
+                            <app-daterangepicker [startDate]="filter.start_date" [endDate]="filter.end_date"
+                                [showRanges]="'true'" (onChange)="setFilterPeriod($event)">
+                            </app-daterangepicker>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <ng-select [items]="categories" (change)="setFilterCategory($event)" class="custom-style"
+                                style="font-size: smaller;" placeholder="Pilih Category" bindLabel="name" bindValue="id"
+                                [loading]="showLoading" [searchable]="false" name="customer_id">
+                                <ng-template ng-header-tmp>
+                                    <input class="form-control" type="text" debounceKeyUp
+                                        (onEvent)="getCategories($any($event.target).value)" />
+                                </ng-template>
+                            </ng-select>
+                        </div>
+                        <div class="col-6 col-md-2 w-auto">
+                            <button type="button" class="btn btn-primary btnSmallku" (click)="reloadSales()">
+                                Tampilkan
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-1 w-auto">
+                            <button type="button" class="btn btn-primary btnSmallku" (click)="downloadExcel()">
+                                Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table table-responsive">
+                        <table class="table table-hover" id="report-sales">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th style="min-width: 110px; vertical-align: middle;" rowspan="2" id="menu">Menu</th>
+                                    <th [colSpan]="meta?.dates?.length" class="text-center" id="periode">Periode : {{ filter.start_date | date:'dd MMMM yyyy' }} - {{ filter.end_date | date:'dd MMMM yyyy' }}</th>
+                                    <th style="min-width: 70px; vertical-align: middle;" rowspan="2" id="total">Total</th>
+                                </tr>
+                                <tr>
+                                    <th *ngFor="let date of meta.dates" id="date">
+                                        {{date | date:'dd'}}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: bold;">Grand Total</td>
+                                    <td class="nominal" *ngFor="let total of meta?.total_per_date">
+                                        {{total >0 ? (total | number) : '-' }}
+                                    </td>
+                                    <td class="nominal">
+                                        {{meta?.grand_total >0 ? (meta?.grand_total | number) : '-'}}
+                                    </td>
+                                </tr>
+                                <ng-container *ngFor="let category of sales">
+                                    <tr class="category">
+                                        <td [colSpan]="meta?.dates?.length + 1 * 1" style="font-weight: bold;">
+                                            {{category.category_name}}
+                                        </td>
+                                        <td class="nominal">
+                                            {{category.category_total | number}}
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let product of category.products">
+                                        <td>
+                                            {{product.product_name}}
+                                        </td>
+                                        <td class="nominal" *ngFor="let sale of product.transactions">
+                                            {{ sale.total_sales  >0 ? (sale.total_sales | number) : '-' }}
+                                        </td>
+                                        <td class="nominal">
+                                            {{product.transactions_total >0 ? (product.transactions_total | number) : '-'}}
+                                        </td>
+                                    </tr>
+                                    <tr class="category">
+                                        <!-- <td>Grand Total</td>
+                                        <td class="nominal" *ngFor="let total of meta?.total_per_date">
+                                            {{total >0 ? (total | number) : '-' }}
+                                        </td> -->
+                                        <!-- <td class="nominal">
+                                            Rp {{meta?.grand_total >0 ? (meta?.grand_total | number) : '-'}}
+                                        </td> -->
+                                    </tr>
+                                </ng-container>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

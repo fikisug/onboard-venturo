@@ -1,0 +1,47 @@
+.card-dashboard > .card-header {
+    background: #009aad;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .icon-container {
+    text-align: center;
+  }
+  
+  .icon-container > .icon {
+    background: #009AAD;
+    padding: 15px 20px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.4rem;
+    display: inline-block;
+    margin-bottom: 15px;
+  }
+  
+  .title-summary h3 {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #4A4A4A;
+    margin-bottom: 0;
+  }
+  
+  .title-summary h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4A4A4A;
+    margin-bottom: 0;
+  }
+  
+  .btn-outline-light {
+    color: #ffffff;
+  }
+  
+  .btn-outline-light:hover,
+  .btn-outline-light.active {
+    color: #2c8da2;
+  }
+
+  .radio-button{
+    appearance: none;
+}

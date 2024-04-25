@@ -1,0 +1,122 @@
+<form>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group row">
+                <div class="col-md-12">
+                    <app-upload-image [defaultImage]="formModel.photo_url" [ratioHigh]="3" [ratioWidth]="3"
+                        (onSubmit)="getCroppedImage($event)"></app-upload-image>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group row">
+                <label class="form-label col-md-3 required">Nama</label>
+                <div class="col-md-9">
+                    <input [(ngModel)]="formModel.name" type="text" name="name" class="form-control"
+                        placeholder="Tulis nama menu">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 required">Kategori</label>
+                <div class="col-md-9">
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="product_category_id"
+                         [(ngModel)]="formModel.product_category_id">
+                        <label *ngFor="let category of categories" ngbButtonLabel class="btn btn-primary">
+                            <input type="radio" class="radio-button" ngbButton [value]="category.id">{{ category.name }}
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 required">Status</label>
+                <div class="col-md-9">
+                    <div class="btn-group btn-group-toggle" ngbRadioGroup name="is_available"
+                        [(ngModel)]="formModel.is_available">
+                        <label ngbButtonLabel class="btn-primary">
+                            <input ngbButton type="radio" class="radio-button" value="1"> Ada
+                        </label>
+                        <label ngbButtonLabel class="btn-primary">
+                            <input ngbButton type="radio" class="radio-button" value="0"> Habis
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 required">Harga</label>
+                <div class="col-md-9">
+                    <div class="input-group mr-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                Rp
+                            </span>
+                        </div>
+                        <input [(ngModel)]="formModel.price" type="text" name="price" class="form-control"
+                            placeholder="Ex. 10.000">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3">Deskripsi</label>
+                <div class="col-md-9">
+                    <ckeditor [editor]="configEditor" [(ngModel)]="formModel.description" name="description"></ckeditor>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <button class="btn btn-sm btn-success" (click)="addDetail()">
+                                    <em class="fa fa-plus"></em>
+                                </button>
+                            </th>
+                            <th style="min-width: 200px;">Keterangan</th>
+                            <th style="min-width: 200px;">Type</th>
+                            <th style="min-width: 150px;">Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let detail of formModel.details; index as i;">
+                            <td>
+                                <button class="btn btn-sm btn-danger" (click)="removeDetail(formModel.details, i)">
+                                    <em class="fa fa-trash"></em>
+                                </button>
+                            </td>
+                            <td>
+                                <input type="text" placeholder="Ex. Level 1" (change)="changeDetail(detail)"
+                                    class="form-control" name="description[{{i}}]" [(ngModel)]="detail.description" />
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm" name="type[{{i}}]" appendTo="body" [(ngModel)]="detail.type"
+                                    placeholder="Pilih Tipe" (change)="changeDetail(detail)">
+                                    <option [value]="'Toping'">Toping</option>
+                                    <option [value]="'Level'">Level</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="input-group mr-2">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            Rp
+                                        </span>
+                                    </div>
+                                    <input [(ngModel)]="detail.price" type="text" (change)="changeDetail(detail)"
+                                        name="price[{{i}}]" class="form-control" placeholder="Ex. 10.000">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-end">
+            <button type="button" class="btn btn-light mr-2" (click)="afterSave.emit()"><em
+                    class="fa fa-arrow-left"></em> Kembali</button>
+            <button type="button" class="btn btn-primary" (click)="save()"><em class="fa fa-save"></em> Simpan</button>
+        </div>
+    </div>
+</form>

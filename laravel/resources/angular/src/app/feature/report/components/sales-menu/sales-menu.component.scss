@@ -1,0 +1,25 @@
+// #report-sales tr td {
+//     min-width: 170px;
+// }
+
+// #report-sales tr td.nominal {
+//     min-width: 120px;
+//     text-align: right;
+// }
+
+// #report-sales tr.category {
+//     background: #F8F9FA;
+// }
+
+// #report-sales tr.category td {
+//     font-weight: 700;
+// }
+
+::ng-deep .ng-select.custom-style .ng-select-container {
+    min-height: 30px;
+  }
+
+.btnSmallku {
+        height: 30px;
+        font-size: smaller;    
+}

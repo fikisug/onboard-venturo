@@ -1,0 +1,108 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card card-summaries">
+                        <div class="card-body text-center">
+                            <div class="icon-container">
+                                <span class="icon">
+                                    <em class="fa fa-chart-bar"></em>
+                                </span>
+                            </div>
+                            <div class="title-summary">
+                                <h3>Hasil Kemarin</h3>
+                                <h2>Rp {{total.yesterday | number}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card card-summaries">
+                        <div class="card-body text-center">
+                            <div class="icon-container">
+                                <span class="icon">
+                                    <em class="fa fa-chart-bar"></em>
+                                </span>
+                            </div>
+                            <div class="title-summary">
+                                <h3>Hasil Hari Ini</h3>
+                                <h2>Rp {{total.today | number}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card card-summaries">
+                        <div class="card-body text-center">
+                            <div class="icon-container">
+                                <span class="icon">
+                                    <em class="fa fa-chart-bar"></em>
+                                </span>
+                            </div>
+                            <div class="title-summary">
+                                <h3>Hasil Bulan Lalu</h3>
+                                <h2>Rp {{total.last_month | number}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card card-summaries">
+                        <div class="card-body text-center">
+                            <div class="icon-container">
+                                <span class="icon">
+                                    <em class="fa fa-chart-bar"></em>
+                                </span>
+                            </div>
+                            <div class="title-summary">
+                                <h3>Hasil Bulan Ini</h3>
+                                <h2>Rp {{total.this_month | number}}</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card card-dashboard">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    Grafik Penjualan
+                    <div class="d-flex flex-column flex-md-row gap-2">
+                        <div class="btn-group btn-group-sm btn-group-toggle" ngbRadioGroup
+                             [(ngModel)]="filter.periodType"
+                             (change)="changeDiagram()">
+                            <label ngbButtonLabel class="btn btn-outline-light">
+                                <input type="radio" class="radio-button" ngbButton value="year">Tahun
+                            </label>
+                            <label ngbButtonLabel class="btn btn-outline-light">
+                                <input type="radio" class="radio-button" ngbButton value="month">Bulan
+                            </label>
+                        </div>
+                        <app-daterangepicker [startDate]="filter.dateRange.startDate"
+                                             [endDate]="filter.dateRange.endDate" [showRanges]="'true'"
+                                             (onChange)="filterByPeriod($event)">
+                        </app-daterangepicker>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div *ngIf="filter.periodType == 'month'" class="btn-group btn-group-sm btn-group-toggle"
+                         ngbRadioGroup [(ngModel)]="selectedYear" (change)="changeDiagram()">
+                        <label *ngFor="let year of listYear" ngbButtonLabel class="btn btn-primary">
+                            <input type="radio" class="radio-button" ngbButton [value]="year">{{ year }}
+                        </label>
+                    </div>
+                    <div id="chart">
+                        <canvas baseChart
+                                [datasets]="barChartData"
+                                [labels]="barChartLabels"
+                                [options]="barChartOptions"
+                                [legend]="true"
+                                [type]="'bar'">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

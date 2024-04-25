@@ -1,0 +1,9 @@
+@media (min-width: 600px) {
+    .w-md-600px {
+      min-width: 700px;
+    }
+}
+  
+::ng-deep .ng-select.custom-style .ng-select-container {
+  min-height: 30px;
+}

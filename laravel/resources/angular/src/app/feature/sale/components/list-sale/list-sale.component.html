@@ -1,0 +1,241 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-transparent">
+                <div class="card-header align-items-center d-block d-md-flex justify-content-between">
+                    <div class="row g-1">
+                        <div class="col-6">
+                            <ng-select #customerDropDown class="filter-select" [items]="customers" id="m_customer_id"
+                                placeholder="Pilih Customer" bindLabel="name" bindValue="id" [loading]="loadingCustomer"
+                                (change)="onCustomerChange($event)" [searchable]="true">
+                            </ng-select>
+                        </div>
+                        <div class="col-6">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control border-right-none" placeholder="Tulis nama menu"
+                                    [(ngModel)]="filter.product_name" name="name" debounceKeyUp
+                                    (onEvent)="getProducts(filter.product_name)" />
+                                <span *ngIf="filter.product_name" class="input-group-text btn-reset">
+                                    <em class="fa fa-times font-size-12 text-black-50"
+                                        (click)="clearFilterProduct()"></em>
+                                </span>
+                                <!-- <span class="input-group-text btn-reset">
+                                    <em class="fa fa-search font-size-12 text-black-50"
+                                        (click)="getProducts(filter.product_name)"></em>
+                                </span> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex flex-row flex-wrap gap-3">
+                    <div class="col-lg-8 col-md-12 card-body">
+                        <div class="loadingProgress" [style.width.%]="loadingProgressProduct"></div>
+                        <div class="row g-3">
+                            <div *ngFor="let product of products; let i = index" class="col-custom">
+                                <a class="card item border-light rounded mb-0 overflow-hidden bd-dark"
+                                    style="cursor: pointer;" (click)="addMenuOrder(product, '', null)"
+                                    [style.pointer-events]="Disabled ? 'none' : 'auto'">
+                                    <button class="edit-menu btn btn-sm" style="pointer-events: auto;"
+                                        (click)="updateProduct(formUpdateProduct, product.m_product_id); $event.stopPropagation()">
+                                        <em class="fa fa-edit"></em>
+                                    </button>
+                                    <!-- <>asdasd</a> -->
+                                    <div class="img w-100 text-center overflow-hidden">
+                                        <img *ngIf="product.photo_url; else noImage" src="{{product.photo_url}}"
+                                            alt="Photo {{product.name}}">
+                                        <ng-template #noImage>
+                                            <div class="null-image mt-3">
+                                                <em class="fa fa-image fa-4x mb-1 text-muted"></em>
+                                                <p class="mt-0 font-size-10">Tidak ada gambar</p>
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="card-body details text-center p-2 m-auto">
+                                        <p class="card-title m-0 font-size-12">{{product.name}}</p>
+                                        <p class="card-text fw-bold">{{product.price | currency:'Rp. '}}</p>
+                                    </div>
+                                </a>
+                                <div>
+                                    <ng-select #detailDropDown class="filter-select" [items]="product.details"
+                                        id="m_product_detail_id_{{i}}" placeholder="Pilih Customer"
+                                        bindLabel="description" bindValue="id" [style.pointer-events]="Disabled ? 'none' : 'auto'"
+                                        (change)="onProductDetailPick($event, product, i);" [searchable]="true">
+                                    </ng-select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-3 bg-light rounded py-4 px-3" style="position: relative;">
+                        <div class="container-fluid">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <p class="m-0">Detail Order</p>
+                                    <h3 class="text-primary">{{ selectedCustomer?.name }}</h3>
+                                </div>
+
+                                <div>
+                                    <button class="btn"
+                                        (click)="updateCustomer(formUpdateCustomer, selectedCustomer.id);">
+                                        <em class="fa fa-edit text-primary"></em>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="promo-section mb-3 py-2">
+                                <p class="mb-2">Promo</p>
+                                <ng-container *ngIf="showLoader; else dataContent">
+                                    <!-- Tampilkan spinner loading di sini -->
+                                    <ngx-spinner bdColor="rgba(0,0,0,0)" size="default" color="#000000"
+                                        type="ball-clip-rotate" [fullScreen]="false"></ngx-spinner>
+                                </ng-container>
+
+                                <ng-template #dataContent>
+                                    <div class="row">
+                                        <div class="col d-flex justify-content-center">
+                                            <div *ngIf="maxDiscountPromo && maxDiscountPromo.length !== 0"
+                                                class="promo rounded">
+                                                <p class="m-0 font-size-13 fw-bold">Diskon</p>
+                                                <h4 class="text-primary mb-0">{{ maxDiscountPromo.nominal_percentage }}%
+                                                </h4>
+                                                <p class="m-0 font-size-10">{{ maxDiscountPromo.name }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col d-flex justify-content-center">
+                                            <div *ngIf="maxVoucherPromo && maxVoucherPromo.length !== 0"
+                                                class="promo rounded">
+                                                <p class="m-0 font-size-13 fw-bold">Voucher</p>
+                                                <h4 class="text-primary mb-0">{{ maxVoucherPromo.nominal_rupiah }}
+                                                </h4>
+                                                <p class="m-0 font-size-10">{{ maxVoucherPromo.name }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </div>
+                            <div cdkDropList class="menu-section mb-3 py-2" (cdkDropListDropped)="drop($event)">
+                                <div *ngFor="let product of productOrders" class="d-flex justify-content-between mb-2 bg-white" cdkDragLockAxis="y" cdkDrag>
+                                    <div class="d-flex align-items-center w-100">
+                                        <div class="img w-100 text-center overflow-hidden">
+                                            <img *ngIf="product.photo_url; else noImage" src="{{product.photo_url}}"
+                                                alt="Photo {{product.name}}">
+                                            <ng-template #noImage>
+                                                <div class="null-image">
+                                                    <em class="fa fa-image fa-2x mb-1 text-muted"></em>
+                                                    <p class="m-0 font-size-10">Tidak ada gambar</p>
+                                                </div>
+                                            </ng-template>
+                                        </div>
+                                        <div>
+                                            <p class="m-0 fw-bold font-size-12">{{product.name}}</p>
+                                            <p class="m-0" style="font-size: small;">{{ product.detail_description }}</p>
+                                            <p class="fw-bold text-primary m-0">
+                                                {{product.price + product.detail_price | currency:'Rp. '}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="qty d-flex align-items-center">
+                                        <button class="btn btn-sm btn-outline-primary" (click)="reduceQty(product)">
+                                            <em class="fas fa-minus"></em>
+                                        </button>
+                                        <span class="mx-2 fw-bold">{{product.total_item}}</span>
+                                        <button class="btn btn-sm btn-primary" (click)="addQty(product)">
+                                            <em class="fas fa-plus"></em>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="detailBayar-section mb-3 py-2">
+                                <p class="m-0">Detail Pembayaran</p>
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="m-0">Subtotal</p>
+                                    </div>
+                                    <div class="col d-flex justify-content-end">
+                                        <p>{{subtotal | currency:'Rp. '}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="m-0">Tax 11%</p>
+                                    </div>
+                                    <div class="col d-flex justify-content-end">
+                                        <p>{{tax | currency:'Rp. '}}</p>
+                                    </div>
+                                </div>
+                                <div class="row mb-0">
+                                    <div class="col">
+                                        <p class="m-0">Diskon {{ maxDiscountPromo ? maxDiscountPromo.nominal_percentage
+                                            : '0' }}%</p>
+                                    </div>
+                                    <div class="col d-flex justify-content-end">
+                                        <p class="mb-0">{{nominalDiscount | currency:'Rp. '}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <p [innerHTML]="maxDiscountPromo ? maxDiscountPromo.term_conditions : ''"
+                                        class="ms-3 font-size-10"></p>
+                                </div>
+                                <div class="row mb-0">
+                                    <div class="col">
+                                        <p class="m-0">Voucher {{ maxVoucherPromo ? maxVoucherPromo.nama : '' }}</p>
+                                    </div>
+                                    <div class="col d-flex justify-content-end">
+                                        <p class="mb-0">{{ maxVoucherPromo ? ('-' + maxVoucherPromo.nominal_rupiah |
+                                            currency:'Rp. ') : 'Rp. 0' }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <p [innerHTML]="maxVoucherPromo ? maxVoucherPromo.term_conditions : ''"
+                                        class="ms-3 font-size-10"></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <p class="m-0">Total Pembayaran</p>
+                                    </div>
+                                    <div class="col d-flex justify-content-end">
+                                        <p>{{totalBayar | currency:'Rp. '}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <button type="submit" class="btn btn-primary btn-sm"
+                                        [ngClass]="{ 'disabled' : Disabled}" (click)="save()">
+                                        <span *ngIf="showLoader" class="spinner-border spinner-border-sm"></span>
+                                        <span *ngIf="!showLoader"><em
+                                                class="fa fa-plus font-size-12 align-middle me-1"></em> Tambah
+                                            Pesanan</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #formUpdateProduct let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Update Product</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-product [productId]="productId" (afterSave)="modal.close(); getProducts(filter.product_name);">
+        </app-form-product>
+    </div>
+</ng-template>
+
+<ng-template #formUpdateCustomer let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title mt-0">Update Customer</h5>
+        <button type="button" class="close" (click)="modal.close()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-form-customer [userId]="selectedCustomer.id"
+            (afterSave)="modal.close(); getCustomers(); updateCustomerName(selectedCustomer.id);">
+        </app-form-customer>
+    </div>
+</ng-template>
